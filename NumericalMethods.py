@@ -133,6 +133,38 @@ def Secant(fcn, x0, x1, maxiter=10, xtol=1e-5):
     return x1
 
 
+def GaussSeidel(Aaug, x, Niter=15):
+    """
+    Solve the system of linear equations Ax = b using the Gauss-Seidel method.
+
+    :param Aaug: Augmented matrix [A | b] with N rows and N+1 columns (N equations, N+1 variables).
+    :param x: Initial guess for the solution (vector of size N).
+    :param Niter: Number of iterations to compute (default is 15).
+    :return: The final solution vector after Niter iterations.
+    """
+    # Extract matrix A and vector b from augmented matrix Aaug
+    N = len(Aaug)  # Number of equations (rows)
+    A = [row[:-1] for row in Aaug]  # Extract the coefficient matrix A (remove last column)
+    b = [row[-1] for row in Aaug]  # Extract the right-hand side vector b (last column)
+
+    # Iterate for the specified number of iterations
+    for k in range(Niter):
+        # Make a copy of the current solution vector to update in the same iteration
+        x_new = x.copy()
+
+        for i in range(N):
+            # Sum over all elements except the diagonal element (i-th row)
+            sigma = sum(A[i][j] * x_new[j] for j in range(N) if j != i)
+
+            # Update the current solution using the Gauss-Seidel formula
+            x_new[i] = (b[i] - sigma) / A[i][i]
+
+        # Update the solution vector x with the new estimates
+        x = x_new
+
+    return x
+
+
 def main():
     '''
     This is a function I created for testing the numerical methods locally.
